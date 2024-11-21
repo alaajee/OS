@@ -19,6 +19,4 @@ ctx_sw:
     movl 12(%eax), %esi
     movl 16(%eax), %edi
     # on passe la main au nouveau processus
-
     ret
-

@@ -1,7 +1,7 @@
 #include <ecran.h>
 
 uint8_t lig = 0;
-uint8_t col = 70;
+uint8_t col = 0;
 const uint32_t NB_COLS = 80;
 const uint32_t NB_LIGS = 25;
 uint16_t* mem_cga = (uint16_t*) VIDEO_MEMORY;

@@ -1,26 +1,32 @@
+#include <cpu.h>
 #include <stdio.h>
+
 #include "time.h"
 
-#define MAX_PILE 512
-#define MAX_TABLE 2
+extern void idle();
+extern void proc1();
+extern void proc2();
+extern void proc3();
+extern void proc4();
+extern void proc5();
+extern void ctx_sw(int * adresse_ancienne , int *  adresse_nouvelle);
+extern int32_t creer_processus(void (*code)(void), char *nom);
 
 typedef enum {
-    ELU, 
-    ACTIVABLE
-} etat_proc;
+    ELU,ACTIVABLE,ENDORMI
+}Etat_processus;
 
-typedef struct _Identification_processus {
+typedef struct {
     int pid;
-    char nom[20];
-    etat_proc etat;
+    char nom_processus[20];
+    Etat_processus etat;
     int registre[5];
-    int pile[MAX_PILE];
-} Identification_processus;
+    int pile[512];
+    char tampon_sortie[256];
+}processus;
 
-extern void idle(void);
-extern void proc1(void);
-extern void ctx_sw(int *adresse_ancien_proc, int *adresse_nouveau_proc);
-
-extern Identification_processus *table_processus[MAX_TABLE];
-extern Identification_processus struct_idle;
-extern Identification_processus struct_proc1;
+extern processus* TableProcessus[6];
+extern processus struct_pile;
+extern processus struct_idle;
+extern processus * actif ;
+extern int32_t pid;

@@ -1,12 +1,11 @@
-#include <cpu.h>
 #include <inttypes.h>
 #include "time.h"
 #include "processus.h"
-
+#include <tinyalloc.h>
 // External function declaration
 extern void traitant_IT_32(void);
-
-
+processus *TableProcessus[6];
+processus* actif;
 uint32_t fact(uint32_t n) {
     uint32_t res;
     if (n <= 1) {
@@ -27,31 +26,42 @@ void kernel_start(void) {
     // masque_IRQ(0, false); 
     
     // Prevent leaving kernel_start
-    cli();
+    // sti();
 
-    memset(&struct_idle, 0, sizeof(struct_idle));  // Initialiser à zéro
+    // On teste les deux processus 
+    processus* struct_idle = (processus * )malloc(sizeof(processus));
+    struct_idle->pid = 0;
+    snprintf(struct_idle->nom_processus, sizeof(struct_idle->nom_processus), "%s", "idle");
+    struct_idle->etat = ELU;
+    // struct_proc1->pid = 0;
+    // snprintf(struct_proc1->nom_processus, sizeof(struct_proc1->nom_processus), "%s", "proc1");
+    // struct_proc1->etat = ACTIVABLE;
+    // struct_proc1->registre[1] = (int)&struct_proc1->pile[511];
+    // struct_proc1->pile[511] = (int)proc1 ;
+    // struct_idle->pile[511] = (int)idle;
+    // struct_idle->registre[1] = (int)&struct_idle->pile[511];
+    TableProcessus[0] = struct_idle;
 
-    struct_idle.pid = 1;
-    strcpy(struct_idle.nom, "idle");
-    struct_idle.etat = ACTIVABLE;
+    int nouveau = creer_processus(proc1,"proc1");
+    TableProcessus[nouveau]->pid = nouveau;  
 
-    // Initialisation de la pile
-    memset(struct_idle.pile, 0, sizeof(struct_idle.pile)); // Effacer la pile
-    struct_idle.registre[1] = (int)&struct_idle.pile[MAX_PILE - 1]; // %esp pour idle
+    nouveau = creer_processus(proc2,"proc2");
+    TableProcessus[nouveau]->pid = nouveau; 
+    
+    nouveau = creer_processus(proc3,"proc3");
+    TableProcessus[nouveau]->pid = nouveau; 
+    
+    nouveau = creer_processus(proc4,"proc4");
+    TableProcessus[nouveau]->pid = nouveau; 
 
-    memset(&struct_proc1, 0, sizeof(struct_proc1));
-    struct_proc1.pid = 1;
-    strcpy(struct_proc1.nom, "proc1");
-    struct_proc1.etat = ACTIVABLE;
-    struct_proc1.registre[1] = (int)(&struct_proc1.pile[511]); // %esp pour proc1
-    struct_proc1.pile[511] = (int)proc1; // Adresse de retour pour le processus proc1
-    // Use already-defined processes
-    table_processus[0] = &struct_idle;
-    table_processus[1] = &struct_proc1;
+    nouveau = creer_processus(proc5,"proc5");
+    TableProcessus[nouveau]->pid = nouveau; 
 
+    actif = TableProcessus[0];
     idle();
 
     while (1) {
         hlt();
     }
+
 }
