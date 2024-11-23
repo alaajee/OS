@@ -21,7 +21,7 @@ void ecrit_car(uint32_t lig, uint32_t col, char c, uint8_t couleur_de_fond,
 
 void efface_ecran(void) {
   for (int i = 0; i < 80; i++) {
-    for (int j = 0; j < 27; j++) {
+    for (int j = 0; j < 25; j++) {
       ecrit_car(j, i,' ', 0, 0, 0);
     }
   }

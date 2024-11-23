@@ -2,66 +2,49 @@
 #include "time.h"
 #include "processus.h"
 #include <tinyalloc.h>
-// External function declaration
+#include <stdio.h>
+#include <stdlib.h>
+
+extern void ajouter_queue(struct processus *process);
 extern void traitant_IT_32(void);
-processus *TableProcessus[6];
-processus* actif;
+extern struct processus* extraire_tete();
+// Fonction récursive pour calculer la factorielle
 uint32_t fact(uint32_t n) {
-    uint32_t res;
-    if (n <= 1) {
-        res = 1;
-    } else {
-        res = fact(n - 1) * n;
-    }
-    return res;
+    if (n <= 1) return 1;
+    return fact(n - 1) * n;
 }
 
 void kernel_start(void) {
-    uint32_t x = fact(5);
-    (void)x;  // Placeholder to suppress unused variable warning
-    efface_ecran();
+    uint32_t x = fact(5); // Calcul de 5!
+    (void)x; // Supprime l'avertissement de variable inutilisée    
 
-    // init_traitant_IT(32, traitant_IT_32);
-    // configure_clock();
-    // masque_IRQ(0, false); 
-    
-    // Prevent leaving kernel_start
-    // sti();
+    efface_ecran(); // Efface l'écran
 
-    // On teste les deux processus 
-    processus* struct_idle = (processus * )malloc(sizeof(processus));
+    // Initialisations pour l'interruption horloge
+    init_traitant_IT(32, traitant_IT_32); // Associe le traitant à l'IT 32
+    configure_clock(); // Configure la fréquence du timer programmable
+    masque_IRQ(0, false); // Active l'IRQ0 (interruption horloge)
+
+    // Initialisation du processus idle
+    struct processus *struct_idle = (struct processus *)malloc(sizeof(struct processus));
     struct_idle->pid = 0;
     snprintf(struct_idle->nom_processus, sizeof(struct_idle->nom_processus), "%s", "idle");
-    struct_idle->etat = ELU;
-    // struct_proc1->pid = 0;
-    // snprintf(struct_proc1->nom_processus, sizeof(struct_proc1->nom_processus), "%s", "proc1");
-    // struct_proc1->etat = ACTIVABLE;
-    // struct_proc1->registre[1] = (int)&struct_proc1->pile[511];
-    // struct_proc1->pile[511] = (int)proc1 ;
-    // struct_idle->pile[511] = (int)idle;
-    // struct_idle->registre[1] = (int)&struct_idle->pile[511];
-    TableProcessus[0] = struct_idle;
+    struct_idle->etat = ELU; // Le processus idle est actif au démarrage
+    struct_idle->suiv = NULL;
 
-    int nouveau = creer_processus(proc1,"proc1");
-    TableProcessus[nouveau]->pid = nouveau;  
+    // Ajouter le processus idle comme tête de la liste activable
+    ajouter_queue(struct_idle);
+    actif = struct_idle; // Le processus actif est "idle"
 
-    nouveau = creer_processus(proc2,"proc2");
-    TableProcessus[nouveau]->pid = nouveau; 
-    
-    nouveau = creer_processus(proc3,"proc3");
-    TableProcessus[nouveau]->pid = nouveau; 
-    
-    nouveau = creer_processus(proc4,"proc4");
-    TableProcessus[nouveau]->pid = nouveau; 
+    // Création des processus utilisateur
+    creer_processus(proc1, "proc1");
+    creer_processus(proc2, "proc2");
+    creer_processus(proc3, "proc3");
+    creer_processus(proc4, "proc4");
+    creer_processus(proc5, "proc5");
+    creer_processus(proc6, "proc6");
+    creer_processus(proc7, "proc7");
 
-    nouveau = creer_processus(proc5,"proc5");
-    TableProcessus[nouveau]->pid = nouveau; 
-
-    actif = TableProcessus[0];
+    // Exécution du processus idle
     idle();
-
-    while (1) {
-        hlt();
-    }
-
 }

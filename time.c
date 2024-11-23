@@ -1,12 +1,19 @@
 #include "time.h"
+#include "processus.h"
+
 int tick_count = 0;
 
 void ecrit_temps(char *c) {
+  int ancien_l = lig ; 
+  int ancien_col = col;
   lig = 0;
   col = 70;
   int longueur = strlen(c);
   console_putbytes(c, longueur);
+  lig = ancien_l;
+  col = ancien_col;
 }
+
 void tic_PIT(void) {
     outb(0x20, 0x20);
     tick_count += 1;
@@ -15,8 +22,9 @@ void tic_PIT(void) {
     unsigned int minutes = (total_seconds % 3600) / 60;
     unsigned int seconds = total_seconds % 60;
     char buffer[20];
-    sprintf(buffer, "%02u:%02u:%02u", hours, minutes, seconds);
+    sprintf(buffer, "%02u:%02u:%02u\n", hours, minutes, seconds);
     ecrit_temps(buffer);
+    ordonnance();
 }
 
 void configure_clock(void) {  
@@ -24,7 +32,6 @@ void configure_clock(void) {
   outb((QUARTZ / CLOCKFREQ) & 0xFF, 0x40); 
   outb((QUARTZ / CLOCKFREQ) >> 8 & 0xFF, 0x40); 
 }
-
 
 void init_traitant_IT(int32_t num_IT, void (*traitant)(void)) {
     uint32_t *Table_32 = (uint32_t *)(IDT_ADDRESS + num_IT * 8);
