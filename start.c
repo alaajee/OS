@@ -29,7 +29,7 @@ void kernel_start(void) {
     struct processus *struct_idle = (struct processus *)malloc(sizeof(struct processus));
     struct_idle->pid = 0;
     snprintf(struct_idle->nom_processus, sizeof(struct_idle->nom_processus), "%s", "idle");
-    struct_idle->etat = ELU; // Le processus idle est actif au démarrage
+    struct_idle->etat = ACTIVABLE; // Le processus idle est actif au démarrage
     struct_idle->suiv = NULL;
 
     // Ajouter le processus idle comme tête de la liste activable
@@ -38,12 +38,7 @@ void kernel_start(void) {
 
     // Création des processus utilisateur
     creer_processus(proc1, "proc1");
-    creer_processus(proc2, "proc2");
-    creer_processus(proc3, "proc3");
-    creer_processus(proc4, "proc4");
-    creer_processus(proc5, "proc5");
-    creer_processus(proc6, "proc6");
-    creer_processus(proc7, "proc7");
+    // creer_processus(proc7, "proc7");
 
     // Exécution du processus idle
     idle();

@@ -18,5 +18,5 @@ extern void tic_PIT(void);
 extern void configure_clock(void);
 extern void init_traitant_IT(int32_t num_IT, void (*traitant)(void));
 extern void masque_IRQ(uint32_t num_IRQ, bool masque);
-
+extern unsigned int total_seconds;
 #endif // HORLOGE_H

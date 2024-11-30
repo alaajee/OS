@@ -2,7 +2,7 @@
 #include "processus.h"
 
 int tick_count = 0;
-
+unsigned int total_seconds = 0;
 void ecrit_temps(char *c) {
   int ancien_l = lig ; 
   int ancien_col = col;
@@ -17,7 +17,7 @@ void ecrit_temps(char *c) {
 void tic_PIT(void) {
     outb(0x20, 0x20);
     tick_count += 1;
-    unsigned int total_seconds = tick_count / CLOCKFREQ;
+    total_seconds = tick_count / CLOCKFREQ;
     unsigned int hours = total_seconds / 3600;
     unsigned int minutes = (total_seconds % 3600) / 60;
     unsigned int seconds = total_seconds % 60;

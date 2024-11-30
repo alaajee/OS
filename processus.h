@@ -17,7 +17,7 @@ extern void ordonnance();
 
 // Définition des états possibles des processus
 typedef enum {
-    ELU, ACTIVABLE, ENDORMI
+    ELU, ACTIVABLE, ENDORMI,ZOMBIE
 } Etat_processus;
 
 // Définition de la structure processus
@@ -28,6 +28,7 @@ struct processus {
     int registre[5];
     int pile[512];
     char tampon_sortie[256];
+    int32_t reveil;
     struct processus *suiv;
 };
 
@@ -42,9 +43,16 @@ struct ListeEndormis {
     struct processus *queue; // Pointeur vers la queue de la liste
 };
 
+// Structure pour gérer la liste des activables
+struct ListeZombies {
+    struct processus *tete;  // Pointeur vers la tête de la liste
+    struct processus *queue; // Pointeur vers la queue de la liste
+};
+
 // Déclarations globales externes
 extern struct ListeActivables listeActivables;
-extern struct ListeEndormis ListeEndormis;
+extern struct ListeEndormis listeEndormis;
+extern struct ListeZombies listeZombies;
 extern struct processus struct_idle;
 extern struct processus *actif;
 extern int32_t pid;
